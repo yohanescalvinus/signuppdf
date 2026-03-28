@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDFSignWeb - Tanda Tangan PDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PDFSignWeb - Tanda Tangan PDF Presisi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,13 +14,11 @@
 
         body {
             font-family: -apple-system, 'Segoe UI', 'Inter', system-ui, sans-serif;
-            background: #f8fafc;
+            background: #f5f7fb;
             color: #0f172a;
-            line-height: 1.5;
         }
 
-        /* Layout */
-        .container {
+        .app {
             max-width: 1400px;
             margin: 0 auto;
             padding: 24px;
@@ -42,11 +40,12 @@
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: #4f46e5;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
         }
 
         .logo-icon i {
@@ -57,7 +56,10 @@
         .logo-text {
             font-size: 28px;
             font-weight: 700;
-            color: #0f172a;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .tagline {
@@ -66,14 +68,14 @@
         }
 
         /* Grid */
-        .grid-2 {
+        .grid {
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr 360px;
             gap: 24px;
         }
 
         @media (max-width: 900px) {
-            .grid-2 {
+            .grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -81,9 +83,9 @@
         /* Cards */
         .card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #eef2ff;
             overflow: hidden;
         }
 
@@ -102,7 +104,6 @@
 
         .card-header h2 i {
             color: #4f46e5;
-            font-size: 18px;
         }
 
         .card-body {
@@ -114,7 +115,6 @@
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
-            flex-wrap: wrap;
         }
 
         .step {
@@ -122,7 +122,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: #f8fafc;
             border-radius: 40px;
             border: 1px solid #e2e8f0;
@@ -138,7 +138,7 @@
             border-color: #10b981;
         }
 
-        .step-number {
+        .step-num {
             width: 28px;
             height: 28px;
             background: #e2e8f0;
@@ -148,26 +148,25 @@
             justify-content: center;
             font-size: 12px;
             font-weight: 600;
-            color: #475569;
         }
 
-        .step.active .step-number {
+        .step.active .step-num {
             background: #4f46e5;
             color: white;
         }
 
-        .step.completed .step-number {
+        .step.completed .step-num {
             background: #10b981;
             color: white;
         }
 
         .step-info h4 {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
         }
 
         .step-info p {
-            font-size: 11px;
+            font-size: 10px;
             color: #64748b;
         }
 
@@ -176,7 +175,6 @@
             display: flex;
             gap: 12px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
         .btn {
@@ -204,10 +202,6 @@
         .btn-success {
             background: #10b981;
             color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
         }
 
         .btn-outline {
@@ -248,6 +242,7 @@
             height: auto;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             border-radius: 8px;
+            display: block;
         }
 
         /* Signature Overlay */
@@ -257,7 +252,8 @@
             z-index: 10;
             border: 2px solid #4f46e5;
             border-radius: 6px;
-            background: rgba(79, 70, 229, 0.05);
+            background: rgba(79, 70, 229, 0.08);
+            box-sizing: border-box;
         }
 
         .sig-overlay img {
@@ -265,6 +261,43 @@
             height: 100%;
             object-fit: contain;
             pointer-events: none;
+        }
+
+        .sig-overlay::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 10px;
+            height: 10px;
+            background: #4f46e5;
+            border-radius: 50%;
+            cursor: nw-resize;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: #0f172a;
         }
 
         /* Tabs */
@@ -303,7 +336,7 @@
         }
 
         /* Canvas */
-        .canvas-container {
+        .canvas-box {
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             padding: 12px;
@@ -331,13 +364,6 @@
 
         .upload-box:hover {
             border-color: #4f46e5;
-            background: #fef9f0;
-        }
-
-        .upload-box i {
-            font-size: 32px;
-            color: #94a3b8;
-            margin-bottom: 12px;
         }
 
         #imgPreview {
@@ -354,21 +380,29 @@
             border-top: 1px solid #f1f5f9;
         }
 
-        .input-group {
-            margin-bottom: 16px;
-        }
-
         .input-group input {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid #e2e8f0;
             border-radius: 40px;
             font-size: 14px;
+            margin-bottom: 12px;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: #4f46e5;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         /* Toast */
@@ -408,7 +442,6 @@
             z-index: 200;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s;
         }
 
         .loading.active {
@@ -440,16 +473,16 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app">
         <div class="header">
             <div class="logo">
                 <div class="logo-icon"><i class="fas fa-pen-fancy"></i></div>
                 <span class="logo-text">PDFSignWeb</span>
             </div>
-            <div class="tagline">Tanda tangani dokumen PDF dengan presisi</div>
+            <div class="tagline">Tanda tangan PDF dengan perhitungan proporsional presisi</div>
         </div>
 
-        <div class="grid-2">
+        <div class="grid">
             <!-- Panel Kiri - PDF -->
             <div class="card">
                 <div class="card-header">
@@ -457,34 +490,27 @@
                 </div>
                 <div class="card-body">
                     <div class="steps">
-                        <div class="step" id="step1">
-                            <div class="step-number">1</div>
-                            <div class="step-info">
-                                <h4>Buka PDF</h4>
-                                <p>Upload dokumen</p>
-                            </div>
-                        </div>
-                        <div class="step" id="step3">
-                            <div class="step-number">3</div>
-                            <div class="step-info">
-                                <h4>Tempatkan</h4>
-                                <p>Drag ke posisi</p>
-                            </div>
-                        </div>
+                        <div class="step" id="step1"><div class="step-num">1</div><div class="step-info"><h4>Buka PDF</h4><p>Upload dokumen</p></div></div>
+                        <div class="step" id="step3"><div class="step-num">3</div><div class="step-info"><h4>Tempatkan</h4><p>Drag ke posisi</p></div></div>
                     </div>
 
                     <div class="btn-group">
-                        <button id="btnOpenPdf" class="btn btn-primary"><i class="fas fa-folder-open"></i> Pilih PDF</button>
-                        <button id="btnPlaceSig" class="btn btn-outline" style="display: none;"><i class="fas fa-location-dot"></i> Tempatkan Tanda Tangan</button>
+                        <button id="btnOpen" class="btn btn-primary"><i class="fas fa-folder-open"></i> Pilih PDF</button>
+                        <button id="btnPlace" class="btn btn-outline" style="display: none;"><i class="fas fa-location-dot"></i> Tempatkan</button>
+                    </div>
+
+                    <!-- Info Ukuran PDF -->
+                    <div class="info-panel" id="pdfInfo" style="display: none;">
+                        <div class="info-row"><span class="info-label">Ukuran Halaman PDF (point):</span><span class="info-value" id="pdfSize"></span></div>
+                        <div class="info-row"><span class="info-label">Skala tampilan:</span><span class="info-value" id="pdfScale"></span></div>
                     </div>
 
                     <div class="pdf-viewer" id="pdfViewer">
                         <div class="pdf-empty" id="pdfEmpty">
                             <i class="fas fa-file-pdf" style="font-size: 48px; margin-bottom: 12px; opacity: 0.5;"></i>
                             <p>Belum ada dokumen</p>
-                            <p style="font-size: 12px;">Klik "Pilih PDF" untuk memulai</p>
                         </div>
-                        <div id="pdfPagesContainer"></div>
+                        <div id="pdfPages"></div>
                     </div>
                 </div>
             </div>
@@ -496,20 +522,14 @@
                 </div>
                 <div class="card-body">
                     <div class="steps">
-                        <div class="step" id="step2">
-                            <div class="step-number">2</div>
-                            <div class="step-info">
-                                <h4>Buat Tanda Tangan</h4>
-                                <p>Manual atau upload</p>
-                            </div>
-                        </div>
-                        <div class="step" id="step4">
-                            <div class="step-number">4</div>
-                            <div class="step-info">
-                                <h4>Simpan</h4>
-                                <p>Unduh PDF</p>
-                            </div>
-                        </div>
+                        <div class="step" id="step2"><div class="step-num">2</div><div class="step-info"><h4>Buat</h4><p>Manual/Upload</p></div></div>
+                        <div class="step" id="step4"><div class="step-num">4</div><div class="step-info"><h4>Simpan</h4><p>Unduh PDF</p></div></div>
+                    </div>
+
+                    <!-- Info Ukuran Tanda Tangan -->
+                    <div class="info-panel" id="sigInfo" style="display: none;">
+                        <div class="info-row"><span class="info-label">Ukuran Tanda Tangan (px):</span><span class="info-value" id="sigSize"></span></div>
+                        <div class="info-row"><span class="info-label">Ukuran di PDF (point):</span><span class="info-value" id="sigPdfSize"></span></div>
                     </div>
 
                     <div class="tabs">
@@ -518,7 +538,7 @@
                     </div>
 
                     <div id="tabManual" class="tab-content active">
-                        <div class="canvas-container">
+                        <div class="canvas-box">
                             <canvas id="signCanvas" width="500" height="150" style="width:100%; height:150px"></canvas>
                         </div>
                         <div style="display: flex; gap: 10px;">
@@ -529,9 +549,9 @@
 
                     <div id="tabUpload" class="tab-content">
                         <div id="uploadBox" class="upload-box">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <div style="font-weight: 500;">Klik untuk upload</div>
-                            <div style="font-size: 11px; color: #94a3b8;">PNG / JPG (max 2MB)</div>
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #94a3b8;"></i>
+                            <div style="font-weight: 500; margin-top: 8px;">Klik untuk upload</div>
+                            <div style="font-size: 11px; color: #94a3b8;">PNG / JPG (background putih akan dihapus)</div>
                             <input type="file" id="fileUpload" accept="image/png,image/jpeg" hidden>
                         </div>
                         <img id="imgPreview" alt="Preview">
@@ -540,15 +560,15 @@
 
                     <div class="save-area">
                         <div class="input-group">
-                            <input type="text" id="fileName" placeholder="Nama file (kosongkan: PDFsignweb)">
+                            <input type="text" id="fileName" placeholder="Nama file (kosong: PDFsignweb)">
                         </div>
-                        <button id="btnSave" class="btn btn-primary" style="width:100%; padding: 12px;"><i class="fas fa-download"></i> Simpan PDF</button>
+                        <button id="btnSave" class="btn-save"><i class="fas fa-download"></i> Simpan PDF</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <footer>© PDFSignWeb — Digital Signature Solution</footer>
+        <footer>© PDFSignWeb — Perhitungan proporsional untuk presisi maksimal</footer>
     </div>
 
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
@@ -561,20 +581,28 @@
         // ========== STATE ==========
         let pdfDoc = null;
         let pages = [];
+        let pdfPageSizes = []; // Ukuran asli PDF dalam point (1 point = 1/72 inch)
         let signatureImg = null;
         let signatureData = null;
+        let signatureOriginalW = 0, signatureOriginalH = 0; // Ukuran asli tanda tangan dalam pixel
         let overlay = null;
         let currentStep = 1;
         let isDragging = false;
         let dragStartX = 0, dragStartY = 0;
-        let overlayX = 100, overlayY = 100;
-        let overlayW = 100, overlayH = 50;
+        let overlayX = 100, overlayY = 100; // Posisi dalam pixel canvas (tampilan)
+        let overlayW = 100, overlayH = 50; // Ukuran dalam pixel canvas (tampilan)
+        
+        // Data untuk perhitungan proporsional
+        let currentScale = 1; // Skala dari PDF point ke pixel tampilan
+        let currentPageWidthPoints = 0;
+        let currentPageHeightPoints = 0;
+        let currentCanvasWidth = 0, currentCanvasHeight = 0;
         
         // DOM
-        const pdfContainer = document.getElementById('pdfPagesContainer');
+        const pdfPagesDiv = document.getElementById('pdfPages');
         const pdfEmpty = document.getElementById('pdfEmpty');
-        const btnOpen = document.getElementById('btnOpenPdf');
-        const btnPlace = document.getElementById('btnPlaceSig');
+        const btnOpen = document.getElementById('btnOpen');
+        const btnPlace = document.getElementById('btnPlace');
         const btnSave = document.getElementById('btnSave');
         const signCanvas = document.getElementById('signCanvas');
         const ctx = signCanvas.getContext('2d');
@@ -585,6 +613,12 @@
         const fileUpload = document.getElementById('fileUpload');
         const imgPreview = document.getElementById('imgPreview');
         const fileName = document.getElementById('fileName');
+        const pdfInfo = document.getElementById('pdfInfo');
+        const pdfSizeSpan = document.getElementById('pdfSize');
+        const pdfScaleSpan = document.getElementById('pdfScale');
+        const sigInfo = document.getElementById('sigInfo');
+        const sigSizeSpan = document.getElementById('sigSize');
+        const sigPdfSizeSpan = document.getElementById('sigPdfSize');
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toastMsg');
         const loading = document.getElementById('loading');
@@ -608,29 +642,26 @@
         }
         
         function updateSteps() {
-            const steps = {
-                1: document.getElementById('step1'),
-                2: document.getElementById('step2'),
-                3: document.getElementById('step3'),
-                4: document.getElementById('step4')
-            };
+            const steps = {1: 'step1', 2: 'step2', 3: 'step3', 4: 'step4'};
             for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(steps[i]);
                 if (i < currentStep) {
-                    steps[i].classList.add('completed');
-                    steps[i].classList.remove('active');
+                    el.classList.add('completed');
+                    el.classList.remove('active');
                 } else if (i === currentStep) {
-                    steps[i].classList.add('active');
-                    steps[i].classList.remove('completed');
+                    el.classList.add('active');
+                    el.classList.remove('completed');
                 } else {
-                    steps[i].classList.remove('active', 'completed');
+                    el.classList.remove('active', 'completed');
                 }
             }
         }
         
         // ========== SIGNATURE CANVAS ==========
         function initCanvas() {
-            const rect = signCanvas.parentElement.getBoundingClientRect();
-            signCanvas.width = rect.width - 24;
+            const container = signCanvas.parentElement;
+            const width = container.clientWidth - 24;
+            signCanvas.width = width;
             signCanvas.height = 150;
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -639,18 +670,18 @@
             
             signCanvas.addEventListener('mousedown', (e) => {
                 isDrawing = true;
-                const rect2 = signCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect2.left) * (signCanvas.width / rect2.width);
-                const y = (e.clientY - rect2.top) * (signCanvas.height / rect2.height);
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
                 ctx.beginPath();
                 ctx.moveTo(x, y);
             });
             
             signCanvas.addEventListener('mousemove', (e) => {
                 if (!isDrawing) return;
-                const rect2 = signCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect2.left) * (signCanvas.width / rect2.width);
-                const y = (e.clientY - rect2.top) * (signCanvas.height / rect2.height);
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
                 ctx.lineTo(x, y);
                 ctx.stroke();
             });
@@ -661,9 +692,9 @@
             signCanvas.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
-                const rect2 = signCanvas.getBoundingClientRect();
-                const x = (touch.clientX - rect2.left) * (signCanvas.width / rect2.width);
-                const y = (touch.clientY - rect2.top) * (signCanvas.height / rect2.height);
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
                 isDrawing = true;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
@@ -673,9 +704,9 @@
                 e.preventDefault();
                 if (!isDrawing) return;
                 const touch = e.touches[0];
-                const rect2 = signCanvas.getBoundingClientRect();
-                const x = (touch.clientX - rect2.left) * (signCanvas.width / rect2.width);
-                const y = (touch.clientY - rect2.top) * (signCanvas.height / rect2.height);
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
                 ctx.lineTo(x, y);
                 ctx.stroke();
             });
@@ -691,52 +722,98 @@
             try {
                 const data = await file.arrayBuffer();
                 pdfDoc = await pdfjsLib.getDocument({ data }).promise;
-                pdfContainer.innerHTML = '';
+                pdfPagesDiv.innerHTML = '';
                 pages = [];
+                pdfPageSizes = [];
                 
                 for (let i = 1; i <= pdfDoc.numPages; i++) {
                     const page = await pdfDoc.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.3 });
+                    
+                    // Ambil ukuran asli PDF dalam point (1 point = 1/72 inch)
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    const pageWidthPoints = viewport.width;
+                    const pageHeightPoints = viewport.height;
+                    pdfPageSizes.push({ width: pageWidthPoints, height: pageHeightPoints });
+                    
+                    // Render untuk tampilan dengan scale 1.2
+                    const displayScale = 1.2;
+                    const displayViewport = page.getViewport({ scale: displayScale });
                     const canvas = document.createElement('canvas');
                     canvas.className = 'pdf-canvas';
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
+                    canvas.width = displayViewport.width;
+                    canvas.height = displayViewport.height;
                     canvas.style.width = '100%';
                     canvas.style.height = 'auto';
                     const ctx2 = canvas.getContext('2d');
-                    await page.render({ canvasContext: ctx2, viewport }).promise;
+                    await page.render({ canvasContext: ctx2, viewport: displayViewport }).promise;
                     
                     const wrapper = document.createElement('div');
                     wrapper.className = 'pdf-page';
                     wrapper.style.position = 'relative';
                     wrapper.appendChild(canvas);
-                    pdfContainer.appendChild(wrapper);
+                    pdfPagesDiv.appendChild(wrapper);
                     
-                    pages.push({ wrapper, canvas, width: viewport.width, height: viewport.height });
+                    pages.push({ 
+                        wrapper, 
+                        canvas, 
+                        displayWidth: displayViewport.width,
+                        displayHeight: displayViewport.height,
+                        pointsWidth: pageWidthPoints,
+                        pointsHeight: pageHeightPoints,
+                        displayScale: displayScale
+                    });
                 }
+                
+                // Hitung skala untuk halaman pertama
+                const firstPage = pages[0];
+                currentScale = firstPage.displayWidth / firstPage.pointsWidth;
+                currentPageWidthPoints = firstPage.pointsWidth;
+                currentPageHeightPoints = firstPage.pointsHeight;
+                currentCanvasWidth = firstPage.displayWidth;
+                currentCanvasHeight = firstPage.displayHeight;
+                
+                // Tampilkan info ukuran PDF
+                pdfInfo.style.display = 'block';
+                pdfSizeSpan.textContent = `${Math.round(currentPageWidthPoints)} pt x ${Math.round(currentPageHeightPoints)} pt`;
+                pdfScaleSpan.textContent = `1 pt = ${currentScale.toFixed(3)} px`;
                 
                 pdfEmpty.style.display = 'none';
                 btnPlace.style.display = 'inline-flex';
                 currentStep = 2;
                 updateSteps();
-                showToast('PDF berhasil dibuka');
+                showToast(`PDF berhasil dibuka - Ukuran halaman: ${Math.round(currentPageWidthPoints)} x ${Math.round(currentPageHeightPoints)} point`);
             } catch (err) {
+                console.error(err);
                 showToast('Gagal membuka PDF', true);
             }
             showLoading(false);
         }
         
-        // ========== SIGNATURE OVERLAY ==========
+        // ========== SIGNATURE OVERLAY dengan Perhitungan Proporsional ==========
         function createOverlay() {
             if (!signatureImg || pages.length === 0) return;
             if (overlay) overlay.remove();
             
             const firstPage = pages[0];
-            overlayW = Math.min(120, firstPage.width / 2);
-            overlayH = (signatureImg.height / signatureImg.width) * overlayW;
-            overlayX = (firstPage.width - overlayW) / 2;
-            overlayY = firstPage.height - overlayH - 50;
             
+            // Hitung ukuran tanda tangan dalam pixel tampilan berdasarkan proporsi
+            // Ukuran tanda tangan yang diinginkan dalam PDF point (misal 100 point lebar)
+            const desiredWidthPoints = 120; // Lebar tanda tangan dalam point PDF
+            const desiredHeightPoints = (signatureOriginalH / signatureOriginalW) * desiredWidthPoints;
+            
+            // Konversi ke pixel tampilan
+            overlayW = desiredWidthPoints * currentScale;
+            overlayH = desiredHeightPoints * currentScale;
+            
+            // Posisi default: di bagian bawah halaman (100 point dari bawah)
+            const posYPoints = currentPageHeightPoints - 80;
+            const posXPoints = (currentPageWidthPoints - desiredWidthPoints) / 2;
+            
+            // Konversi posisi ke pixel tampilan
+            overlayX = posXPoints * currentScale;
+            overlayY = posYPoints * currentScale;
+            
+            // Buat overlay
             overlay = document.createElement('div');
             overlay.className = 'sig-overlay';
             overlay.style.cssText = `position:absolute; left:${overlayX}px; top:${overlayY}px; width:${overlayW}px; height:${overlayH}px;`;
@@ -745,7 +822,12 @@
             overlay.appendChild(img);
             firstPage.wrapper.appendChild(overlay);
             
-            // Drag events
+            // Tampilkan info ukuran tanda tangan
+            sigInfo.style.display = 'block';
+            sigSizeSpan.textContent = `${Math.round(signatureOriginalW)} x ${Math.round(signatureOriginalH)} px`;
+            sigPdfSizeSpan.textContent = `${desiredWidthPoints.toFixed(1)} pt x ${desiredHeightPoints.toFixed(1)} pt`;
+            
+            // Setup drag events dengan konversi posisi
             overlay.addEventListener('mousedown', (e) => {
                 e.preventDefault();
                 isDragging = true;
@@ -803,10 +885,10 @@
             
             currentStep = 4;
             updateSteps();
-            showToast('Seret tanda tangan ke posisi yang diinginkan');
+            showToast(`Tanda tangan ditempatkan di posisi: X=${overlayX.toFixed(0)}px, Y=${overlayY.toFixed(0)}px`);
         }
         
-        // ========== SAVE PDF ==========
+        // ========== SAVE PDF dengan Perhitungan Proporsional ==========
         async function savePDF() {
             if (!pdfDoc || !signatureImg) {
                 showToast('Buka PDF dan buat tanda tangan terlebih dahulu', true);
@@ -821,33 +903,49 @@
                 for (let i = 0; i < pages.length; i++) {
                     const page = pages[i];
                     const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = page.width;
-                    tempCanvas.height = page.height;
+                    tempCanvas.width = page.displayWidth;
+                    tempCanvas.height = page.displayHeight;
                     const tempCtx = tempCanvas.getContext('2d');
                     
+                    // Gambar halaman PDF
                     tempCtx.drawImage(page.canvas, 0, 0);
                     
+                    // Tambahkan tanda tangan ke halaman pertama
                     if (i === 0 && overlay) {
+                        // Konversi posisi dari pixel tampilan ke point PDF
+                        const scaleFactor = 1 / currentScale;
+                        const sigXPoints = overlayX * scaleFactor;
+                        const sigYPoints = overlayY * scaleFactor;
+                        const sigWPoints = overlayW * scaleFactor;
+                        const sigHPoints = overlayH * scaleFactor;
+                        
+                        // Gambar tanda tangan ke canvas dengan posisi yang sudah dikonversi
                         const img = new Image();
                         await new Promise((resolve) => {
                             img.onload = () => {
+                                // Gambar di posisi yang tepat (pixel tampilan)
                                 tempCtx.drawImage(img, overlayX, overlayY, overlayW, overlayH);
                                 resolve();
                             };
                             img.src = signatureData;
                         });
+                        
+                        console.log(`Tanda tangan ditempatkan di PDF (point): X=${sigXPoints.toFixed(2)}, Y=${sigYPoints.toFixed(2)}, W=${sigWPoints.toFixed(2)}, H=${sigHPoints.toFixed(2)}`);
                     }
                     
-                    const imgData = tempCanvas.toDataURL('image/jpeg', 0.9);
+                    // Konversi ke JPEG dan tambahkan ke PDF
+                    const imgData = tempCanvas.toDataURL('image/jpeg', 0.92);
                     if (i > 0) pdf.addPage();
-                    const pdfW = pdf.internal.pageSize.getWidth();
-                    const pdfH = (tempCanvas.height / tempCanvas.width) * pdfW;
-                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+                    
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (tempCanvas.height / tempCanvas.width) * pdfWidth;
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                 }
                 
                 pdf.save(name + '.pdf');
-                showToast(`✓ ${name}.pdf berhasil disimpan`);
+                showToast(`✓ ${name}.pdf berhasil disimpan dengan posisi presisi`);
             } catch (err) {
+                console.error(err);
                 showToast('Gagal menyimpan PDF', true);
             }
             showLoading(false);
@@ -855,18 +953,23 @@
         
         // ========== SIGNATURE METHODS ==========
         function useManual() {
-            const empty = ctx.getImageData(0, 0, signCanvas.width, signCanvas.height).data.every(v => v === 0);
-            if (empty) {
+            // Cek apakah canvas kosong
+            const imgData = ctx.getImageData(0, 0, signCanvas.width, signCanvas.height);
+            const hasDrawing = imgData.data.some((val, idx) => idx % 4 !== 3 && val !== 0);
+            if (!hasDrawing) {
                 showToast('Gambar tanda tangan terlebih dahulu', true);
                 return;
             }
+            
             signatureData = signCanvas.toDataURL('image/png');
             const img = new Image();
             img.onload = () => {
                 signatureImg = img;
+                signatureOriginalW = img.width;
+                signatureOriginalH = img.height;
                 currentStep = 3;
                 updateSteps();
-                showToast('Tanda tangan siap, klik "Tempatkan Tanda Tangan"');
+                showToast(`Tanda tangan siap (${signatureOriginalW} x ${signatureOriginalH} px), klik "Tempatkan"`);
             };
             img.src = signatureData;
         }
@@ -874,15 +977,22 @@
         function handleUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Ukuran file maksimal 2MB', true);
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const img = new Image();
                 img.onload = () => {
+                    // Remove white background
                     const canvas = document.createElement('canvas');
                     const cctx = canvas.getContext('2d');
                     canvas.width = img.width;
                     canvas.height = img.height;
                     cctx.drawImage(img, 0, 0);
+                    
                     const imgData = cctx.getImageData(0, 0, canvas.width, canvas.height);
                     const data = imgData.data;
                     for (let i = 0; i < data.length; i += 4) {
@@ -892,13 +1002,16 @@
                     }
                     cctx.putImageData(imgData, 0, 0);
                     signatureData = canvas.toDataURL('image/png');
+                    
                     const cleaned = new Image();
                     cleaned.onload = () => {
                         signatureImg = cleaned;
+                        signatureOriginalW = cleaned.width;
+                        signatureOriginalH = cleaned.height;
                         imgPreview.src = signatureData;
                         imgPreview.style.display = 'block';
                         btnUseImage.style.display = 'block';
-                        showToast('Gambar siap digunakan');
+                        showToast(`Gambar siap (${signatureOriginalW} x ${signatureOriginalH} px)`);
                     };
                     cleaned.src = signatureData;
                 };
@@ -914,7 +1027,7 @@
             }
             currentStep = 3;
             updateSteps();
-            showToast('Tanda tangan siap, klik "Tempatkan Tanda Tangan"');
+            showToast(`Tanda tangan siap (${signatureOriginalW} x ${signatureOriginalH} px), klik "Tempatkan"`);
         }
         
         // ========== TAB ==========
