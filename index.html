@@ -11,7 +11,6 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.2s ease;
         }
 
         /* Light Mode (Default) */
@@ -23,21 +22,23 @@
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.95);
             --text-muted: rgba(255, 255, 255, 0.75);
-            --btn-primary-bg: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
+            --btn-primary-bg: linear-gradient(135deg, #ffffff, #f0f0f0);
             --btn-primary-color: #5b21b6;
             --btn-success-bg: linear-gradient(135deg, #10b981, #059669);
             --btn-outline-bg: rgba(255, 255, 255, 0.15);
             --btn-outline-border: rgba(255, 255, 255, 0.3);
             --pdf-viewer-bg: rgba(0, 0, 0, 0.2);
-            --canvas-bg: rgba(255, 255, 255, 0.98);
+            --canvas-bg: #ffffff;
             --input-bg: rgba(255, 255, 255, 0.15);
             --input-border: rgba(255, 255, 255, 0.3);
             --step-bg: rgba(255, 255, 255, 0.12);
             --step-border: rgba(255, 255, 255, 0.2);
             --step-active-bg: rgba(255, 255, 255, 0.25);
             --step-number-bg: rgba(255, 255, 255, 0.25);
-            --step-number-active: #ffffff;
-            --step-number-completed: #10b981;
+            --step-number-color: #ffffff;
+            --step-number-active-bg: #ffffff;
+            --step-number-active-color: #667eea;
+            --step-number-completed-bg: #10b981;
             --step-label-color: rgba(255, 255, 255, 0.95);
             --step-desc-color: rgba(255, 255, 255, 0.7);
             --toast-bg: rgba(0, 0, 0, 0.85);
@@ -45,10 +46,14 @@
             --overlay-bg: rgba(255, 255, 255, 0.2);
             --resize-handle-bg: #ffffff;
             --resize-handle-border: #667eea;
+            --tab-bg: rgba(255, 255, 255, 0.12);
+            --tab-active-bg: rgba(255, 255, 255, 0.25);
+            --tab-color: rgba(255, 255, 255, 0.7);
+            --tab-active-color: #ffffff;
         }
 
         /* Dark Mode */
-        body.dark {
+        .dark-mode {
             --bg-gradient-start: #0a0a0a;
             --bg-gradient-end: #1a1a2e;
             --card-bg: rgba(20, 20, 35, 0.95);
@@ -69,8 +74,10 @@
             --step-border: rgba(255, 255, 255, 0.12);
             --step-active-bg: rgba(59, 130, 246, 0.25);
             --step-number-bg: rgba(255, 255, 255, 0.2);
-            --step-number-active: #ffffff;
-            --step-number-completed: #10b981;
+            --step-number-color: #ffffff;
+            --step-number-active-bg: #3b82f6;
+            --step-number-active-color: #ffffff;
+            --step-number-completed-bg: #10b981;
             --step-label-color: rgba(255, 255, 255, 0.95);
             --step-desc-color: rgba(255, 255, 255, 0.65);
             --toast-bg: rgba(0, 0, 0, 0.9);
@@ -78,6 +85,10 @@
             --overlay-bg: rgba(59, 130, 246, 0.15);
             --resize-handle-bg: #3b82f6;
             --resize-handle-border: #ffffff;
+            --tab-bg: rgba(255, 255, 255, 0.08);
+            --tab-active-bg: rgba(59, 130, 246, 0.3);
+            --tab-color: rgba(255, 255, 255, 0.6);
+            --tab-active-color: #ffffff;
         }
 
         body {
@@ -87,6 +98,7 @@
             padding: 16px;
             position: relative;
             overflow-x: hidden;
+            transition: background 0.3s ease;
         }
 
         /* Background decorative elements */
@@ -117,6 +129,7 @@
             border-radius: 28px;
             padding: 20px;
             border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
         }
 
         .logo-section {
@@ -178,7 +191,6 @@
             font-weight: 500;
             color: var(--text-primary);
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
         }
 
         .theme-toggle:hover {
@@ -186,7 +198,7 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Steps - Enhanced Contrast */
+        /* Steps */
         .steps {
             display: flex;
             justify-content: space-between;
@@ -199,6 +211,7 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            transition: all 0.3s ease;
         }
 
         .steps::-webkit-scrollbar {
@@ -226,18 +239,18 @@
             margin: 0 auto 8px;
             font-weight: 700;
             font-size: 14px;
-            color: var(--text-primary);
+            color: var(--step-number-color);
             transition: all 0.2s;
         }
 
         .step-item.active .step-number {
-            background: var(--step-number-active);
-            color: #4f46e5;
+            background: var(--step-number-active-bg);
+            color: var(--step-number-active-color);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .step-item.completed .step-number {
-            background: var(--step-number-completed);
+            background: var(--step-number-completed-bg);
             color: white;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
@@ -280,6 +293,7 @@
             border-radius: 24px;
             border: 1px solid var(--card-border);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .card-header {
@@ -312,7 +326,6 @@
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-primary {
@@ -527,10 +540,11 @@
         .tabs {
             display: flex;
             gap: 6px;
-            background: var(--step-bg);
+            background: var(--tab-bg);
             padding: 4px;
             border-radius: 40px;
             margin-bottom: 16px;
+            transition: all 0.3s ease;
         }
 
         .tab {
@@ -542,12 +556,13 @@
             font-size: 12px;
             font-weight: 500;
             cursor: pointer;
-            color: var(--text-muted);
+            color: var(--tab-color);
+            transition: all 0.2s;
         }
 
         .tab.active {
-            background: var(--step-active-bg);
-            color: var(--text-primary);
+            background: var(--tab-active-bg);
+            color: var(--tab-active-color);
         }
 
         .tab-content {
@@ -808,38 +823,50 @@
         // ==================== DARK/LIGHT MODE ====================
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = themeToggle.querySelector('i');
-        const themeText = document.getElementById('themeText');
+        const themeTextSpan = document.getElementById('themeText');
         
-        // Check saved theme or system preference
-        const savedTheme = localStorage.getItem('pdfsign_theme');
-        
+        // Function to set theme
         function setTheme(isDark) {
             if (isDark) {
-                document.body.classList.add('dark');
+                document.body.classList.add('dark-mode');
                 themeIcon.className = 'fas fa-sun';
-                themeText.textContent = 'Light Mode';
+                themeTextSpan.textContent = 'Light Mode';
                 localStorage.setItem('pdfsign_theme', 'dark');
-                showToast('Dark mode aktif');
+                showToastMessage('Dark mode aktif');
             } else {
-                document.body.classList.remove('dark');
+                document.body.classList.remove('dark-mode');
                 themeIcon.className = 'fas fa-moon';
-                themeText.textContent = 'Dark Mode';
+                themeTextSpan.textContent = 'Dark Mode';
                 localStorage.setItem('pdfsign_theme', 'light');
-                showToast('Light mode aktif');
+                showToastMessage('Light mode aktif');
+            }
+            // Update canvas stroke color
+            if (typeof ctx !== 'undefined' && ctx) {
+                ctx.strokeStyle = isDark ? '#ffffff' : '#1f2937';
             }
         }
         
-        // Initialize theme
+        // Check saved theme
+        const savedTheme = localStorage.getItem('pdfsign_theme');
         if (savedTheme === 'dark') {
             setTheme(true);
         } else {
             setTheme(false);
         }
         
+        // Toggle button click
         themeToggle.addEventListener('click', () => {
-            const isDark = !document.body.classList.contains('dark');
+            const isDark = !document.body.classList.contains('dark-mode');
             setTheme(isDark);
         });
+        
+        function showToastMessage(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
         
         // ==================== STATE ====================
         let pdfDoc = null;
@@ -964,16 +991,11 @@
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.strokeStyle = document.body.classList.contains('dark') ? '#ffffff' : '#1f2937';
+                const isDark = document.body.classList.contains('dark-mode');
+                ctx.strokeStyle = isDark ? '#ffffff' : '#1f2937';
             };
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-            
-            // Update stroke color when theme changes
-            const observer = new MutationObserver(() => {
-                ctx.strokeStyle = document.body.classList.contains('dark') ? '#ffffff' : '#1f2937';
-            });
-            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
             
             // Mouse events
             signCanvas.addEventListener('mousedown', (e) => {
