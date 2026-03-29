@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PDFSignWeb | Digital Signature</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* LIGHT MODE (DEFAULT) */
+        body {
+            --bg1: #667eea;
+            --bg2: #764ba2;
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --border: rgba(255, 255, 255, 0.25);
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --btn-primary-bg: linear-gradient(135deg, #ffffff, #f8f9fa);
+            --btn-primary-color: #5b21b6;
+            --btn-outline-bg: rgba(255, 255, 255, 0.15);
+            --btn-outline-border: rgba(255, 255, 255, 0.3);
+            --canvas-bg: #ffffff;
+            --input-bg: rgba(255, 255, 255, 0.15);
+            --step-bg: rgba(255, 255, 255, 0.12);
+            --step-number-bg: rgba(255, 255, 255, 0.25);
+            --step-number-color: #ffffff;
+            --step-active-number-bg: #ffffff;
+            --step-active-number-color: #667eea;
+            --step-completed-bg: #10b981;
+            --tab-bg: rgba(255, 255, 255, 0.12);
+            --tab-active-bg: rgba(255, 255, 255, 0.25);
+            --tab-color: rgba(255, 255, 255, 0.7);
+            --tab-active-color: #ffffff;
+            --footer-text: rgba(255, 255, 255, 0.6);
+            
+            background: linear-gradient(135deg, var(--bg1), var(--bg2));
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        /* DARK MODE */
+        body.dark {
+            --bg1: #0a0a0a;
+            --bg2: #1a1a2e;
+            --card-bg: rgba(20, 20, 35, 0.95);
+            --border: rgba(255, 255, 255, 0.12);
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --btn-primary-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+            --btn-primary-color: #ffffff;
+            --btn-outline-bg: rgba(255, 255, 255, 0.08);
+            --btn-outline-border: rgba(255, 255, 255, 0.2);
+            --canvas-bg: #1e1e2e;
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --step-bg: rgba(255, 255, 255, 0.08);
+            --step-number-bg: rgba(255, 255, 255, 0.2);
+            --step-number-color: #ffffff;
+            --step-active-number-bg: #3b82f6;
+            --step-active-number-color: #ffffff;
+            --step-completed-bg: #10b981;
+            --tab-bg: rgba(255, 255, 255, 0.08);
+            --tab-active-bg: rgba(59, 130, 246, 0.3);
+            --tab-color: rgba(255, 255, 255, 0.6);
+            --tab-active-color: #ffffff;
+            --footer-text: rgba(255, 255, 255, 0.5);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ========== HEADER MINIMALIS ========== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding: 0 8px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+        }
+
+        .logo-icon i {
+            font-size: 22px;
+            color: var(--text);
+        }
+
+        .title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .title p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--btn-outline-bg);
+            border: 1px solid var(--btn-outline-border);
+            border-radius: 40px;
+            padding: 8px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Steps */
+        .steps {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: var(--step-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 8px 8px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            background: var(--step-number-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--step-number-color);
+        }
+
+        .step.active .step-number {
+            background: var(--step-active-number-bg);
+            color: var(--step-active-number-color);
+        }
+
+        .step.completed .step-number {
+            background: var(--step-completed-bg);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 360px;
+            }
+        }
+
+        /* Cards */
+        .card {
+            backdrop-filter: blur(12px);
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-color);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-outline {
+            background: var(--btn-outline-bg);
+            color: var(--text);
+            border: 1px solid var(--btn-outline-border);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* PDF Info */
+        .pdf-info {
+            background: var(--btn-outline-bg);
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 14px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--btn-outline-border);
+        }
+
+        .pdf-name {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 11px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* PDF Viewer */
+        .pdf-viewer {
+            border-radius: 16px;
+            overflow: auto;
+            max-height: 450px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .pdf-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .pdf-page {
+            position: relative;
+            margin: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pdf-canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            background: white;
+        }
+
+        /* Signature Overlay */
+        .sig-overlay {
+            position: absolute;
+            cursor: move;
+            z-index: 10;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .sig-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: nw-resize;
+            border: 2px solid white;
+        }
+
+        /* Canvas */
+        .canvas-box {
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 14px;
+            background: var(--btn-outline-bg);
+            border: 1px solid var(--btn-outline-border);
+        }
+
+        #signCanvas {
+            width: 100%;
+            height: 140px;
+            background: var(--canvas-bg);
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+
+        /* Upload */
+        .upload-box {
+            border: 1px dashed var(--btn-outline-border);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--btn-outline-bg);
+        }
+
+        .upload-box i {
+            color: var(--text-muted);
+            font-size: 28px;
+        }
+
+        .upload-box div {
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        #imgPreview {
+            max-width: 100%;
+            max-height: 70px;
+            margin-top: 12px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Size Control */
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .size-control input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--btn-outline-border);
+            border-radius: 30px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .size-control button {
+            padding: 8px 16px;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-color);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--tab-bg);
+            padding: 4px;
+            border-radius: 40px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            border-radius: 32px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--tab-color);
+        }
+
+        .tab.active {
+            background: var(--tab-active-bg);
+            color: var(--tab-active-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Save */
+        .save-area {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .save-area input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid var(--btn-outline-border);
+            border-radius: 40px;
+            margin-bottom: 10px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-color);
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 12px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== FOOTER MINIMALIS ========== */
+        .footer {
+            text-align: center;
+            padding: 20px 16px;
+            border-top: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .footer p {
+            font-size: 11px;
+            color: var(--footer-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .footer i {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER MINIMALIS -->
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fas fa-pen-fancy"></i>
+                </div>
+                <div class="title">
+                    <h1>PDFSignWeb</h1>
+                    <p>Digital Signature Solution</p>
+                </div>
+            </div>
+            <button id="themeToggleBtn" class="theme-toggle">
+                <i id="themeIcon" class="fas fa-moon"></i>
+                <span id="themeLabel">Dark Mode</span>
+            </button>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step" data-step="1" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-label">Buka PDF</div>
+            </div>
+            <div class="step" data-step="2" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-label">Buat Tanda Tangan</div>
+            </div>
+            <div class="step" data-step="3" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-label">Tempatkan</div>
+            </div>
+            <div class="step" data-step="4" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-label">Simpan</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Left Panel - PDF -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-file-pdf"></i> Dokumen</h2>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group">
+                        <button id="openPdfBtn" class="btn btn-primary"><i class="fas fa-folder-open"></i> Pilih PDF</button>
+                        <button id="placeBtn" class="btn btn-outline" style="display: none;"><i class="fas fa-location-dot"></i> Tempatkan</button>
+                        <button id="newSignBtn" class="btn btn-warning" style="display: none;"><i class="fas fa-arrow-left"></i> Baru</button>
+                    </div>
+
+                    <div id="pdfInfo" class="pdf-info" style="display: none;">
+                        <span><i class="fas fa-file-pdf"></i> <span id="pdfName" class="pdf-name"></span></span>
+                        <button id="changePdfBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 10px;">Ganti</button>
+                    </div>
+
+                    <div class="pdf-viewer" id="pdfViewer">
+                        <div class="pdf-empty" id="pdfEmpty">
+                            <i class="fas fa-file-pdf" style="font-size: 36px;"></i>
+                            <p style="margin-top: 8px;">Pilih PDF untuk memulai</p>
+                        </div>
+                        <div id="pdfPages"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Signature -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-signature"></i> Tanda Tangan</h2>
+                </div>
+                <div class="card-body">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="manual">✍️ Manual</button>
+                        <button class="tab" data-tab="upload">🖼️ Upload</button>
+                    </div>
+
+                    <div id="manualTab" class="tab-content active">
+                        <div class="canvas-box">
+                            <canvas id="signCanvas"></canvas>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="clearCanvasBtn" class="btn btn-outline" style="flex:1"><i class="fas fa-eraser"></i> Hapus</button>
+                            <button id="useManualBtn" class="btn btn-success" style="flex:1"><i class="fas fa-check"></i> Gunakan</button>
+                        </div>
+                    </div>
+
+                    <div id="uploadTab" class="tab-content">
+                        <div id="uploadArea" class="upload-box">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div>Klik untuk upload</div>
+                            <input type="file" id="imageUpload" accept="image/png,image/jpeg" hidden>
+                        </div>
+                        <img id="previewImg" alt="Preview">
+                        <button id="useImageBtn" class="btn btn-success" style="width:100%; margin-top: 10px; display: none;">Gunakan</button>
+                    </div>
+
+                    <div id="sizeControl" class="size-control" style="display: none;">
+                        <span>Lebar (point):</span>
+                        <input type="number" id="sigWidthInput" value="120" step="10">
+                        <button id="applySizeBtn">Terapkan</button>
+                    </div>
+
+                    <div class="save-area">
+                        <input type="text" id="fileNameInput" placeholder="Nama file (kosong: PDFsignweb)">
+                        <button id="savePdfBtn" class="btn-save"><i class="fas fa-download"></i> Simpan PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER MINIMALIS -->
+        <div class="footer">
+            <p>
+                <i class="fas fa-heart"></i>
+                Aplikasi ini gratis dan harap gunakan dengan bijaksana
+                <i class="fas fa-shield-alt"></i>
+            </p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
+    <div class="loading" id="loading"><div class="spinner"></div></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // ==================== DARK MODE TOGGLE ====================
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIconEl = document.getElementById('themeIcon');
+        const themeLabelEl = document.getElementById('themeLabel');
+        
+        const isDarkMode = localStorage.getItem('pdfsign_theme') === 'dark';
+        
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+            themeIconEl.className = 'fas fa-sun';
+            themeLabelEl.textContent = 'Light Mode';
+        } else {
+            document.body.classList.remove('dark');
+            themeIconEl.className = 'fas fa-moon';
+            themeLabelEl.textContent = 'Dark Mode';
+        }
+        
+        themeBtn.onclick = function(e) {
+            e.preventDefault();
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                themeIconEl.className = 'fas fa-moon';
+                themeLabelEl.textContent = 'Dark Mode';
+                localStorage.setItem('pdfsign_theme', 'light');
+                showToastMessage('Light mode aktif');
+            } else {
+                document.body.classList.add('dark');
+                themeIconEl.className = 'fas fa-sun';
+                themeLabelEl.textContent = 'Light Mode';
+                localStorage.setItem('pdfsign_theme', 'dark');
+                showToastMessage('Dark mode aktif');
+            }
+            if (typeof ctx !== 'undefined' && ctx) {
+                ctx.strokeStyle = document.body.classList.contains('dark') ? '#ffffff' : '#1f2937';
+            }
+        };
+        
+        function showToastMessage(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // ==================== PDF SIGNATURE APP ====================
+        let pdfDoc = null;
+        let pdfPages = [];
+        let signatureImg = null;
+        let signatureData = null;
+        let overlay = null;
+        let currentStep = 1;
+        let isDragging = false;
+        let isResizing = false;
+        let dragStartX = 0, dragStartY = 0;
+        let overlayX = 100, overlayY = 100;
+        let overlayW = 120, overlayH = 60;
+        let scale = 1;
+        let pageWidthPoints = 0;
+        let sigOriginalW = 0, sigOriginalH = 0;
+        
+        // DOM
+        const pdfPagesDiv = document.getElementById('pdfPages');
+        const pdfEmpty = document.getElementById('pdfEmpty');
+        const pdfInfoDiv = document.getElementById('pdfInfo');
+        const pdfNameSpan = document.getElementById('pdfName');
+        const openBtn = document.getElementById('openPdfBtn');
+        const placeBtn = document.getElementById('placeBtn');
+        const newSignBtn = document.getElementById('newSignBtn');
+        const changePdfBtn = document.getElementById('changePdfBtn');
+        const saveBtn = document.getElementById('savePdfBtn');
+        const signCanvas = document.getElementById('signCanvas');
+        const ctx = signCanvas.getContext('2d');
+        const clearCanvas = document.getElementById('clearCanvasBtn');
+        const useManual = document.getElementById('useManualBtn');
+        const useImage = document.getElementById('useImageBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const imageUpload = document.getElementById('imageUpload');
+        const previewImg = document.getElementById('previewImg');
+        const fileNameInput = document.getElementById('fileNameInput');
+        const sizeControl = document.getElementById('sizeControl');
+        const sigWidthInput = document.getElementById('sigWidthInput');
+        const applySizeBtn = document.getElementById('applySizeBtn');
+        const loading = document.getElementById('loading');
+        
+        let isDrawing = false;
+        
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        function showLoading(show) {
+            loading.classList.toggle('active', show);
+        }
+        
+        function updateSteps() {
+            for (let i = 1; i <= 4; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                if (i < currentStep) {
+                    stepEl.classList.add('completed');
+                    stepEl.classList.remove('active');
+                } else if (i === currentStep) {
+                    stepEl.classList.add('active');
+                    stepEl.classList.remove('completed');
+                } else {
+                    stepEl.classList.remove('active', 'completed');
+                }
+            }
+        }
+        
+        function initCanvas() {
+            const resizeCanvas = () => {
+                const container = signCanvas.parentElement;
+                const width = container.clientWidth - 20;
+                signCanvas.width = width;
+                signCanvas.height = 140;
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = document.body.classList.contains('dark') ? '#ffffff' : '#1f2937';
+            };
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            signCanvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            });
+            
+            signCanvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            });
+            
+            signCanvas.addEventListener('mouseup', () => { isDrawing = false; ctx.closePath(); });
+            signCanvas.addEventListener('mouseout', () => { isDrawing = false; ctx.closePath(); });
+            
+            signCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
+                isDrawing = true;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            });
+            
+            signCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!isDrawing) return;
+                const touch = e.touches[0];
+                const rect = signCanvas.getBoundingClientRect();
+                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
+                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            });
+            
+            signCanvas.addEventListener('touchend', () => { isDrawing = false; ctx.closePath(); });
+        }
+        
+        clearCanvas.onclick = () => ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+        
+        async function openPDF(file) {
+            showLoading(true);
+            try {
+                const data = await file.arrayBuffer();
+                pdfDoc = await pdfjsLib.getDocument({ data }).promise;
+                pdfPagesDiv.innerHTML = '';
+                pdfPages = [];
+                
+                pdfNameSpan.textContent = file.name;
+                pdfInfoDiv.style.display = 'flex';
+                
+                for (let i = 1; i <= pdfDoc.numPages; i++) {
+                    const page = await pdfDoc.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    
+                    if (i === 1) {
+                        pageWidthPoints = viewport.width;
+                    }
+                    
+                    const displayScale = Math.min(1.2, window.innerWidth / viewport.width);
+                    const displayViewport = page.getViewport({ scale: displayScale });
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-canvas';
+                    canvas.width = displayViewport.width;
+                    canvas.height = displayViewport.height;
+                    canvas.style.width = '100%';
+                    const ctx2 = canvas.getContext('2d');
+                    await page.render({ canvasContext: ctx2, viewport: displayViewport }).promise;
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'pdf-page';
+                    wrapper.style.position = 'relative';
+                    wrapper.appendChild(canvas);
+                    pdfPagesDiv.appendChild(wrapper);
+                    
+                    pdfPages.push({ wrapper, canvas, width: displayViewport.width, height: displayViewport.height });
+                }
+                
+                scale = pdfPages[0].width / pageWidthPoints;
+                pdfEmpty.style.display = 'none';
+                placeBtn.style.display = 'inline-flex';
+                currentStep = 2;
+                updateSteps();
+                showToast('PDF berhasil dibuka');
+            } catch (err) {
+                showToast('Gagal membuka PDF');
+            }
+            showLoading(false);
+        }
+        
+        function changePDF() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf';
+            input.onchange = async (e) => {
+                if (e.target.files[0]) {
+                    if (overlay) overlay.remove();
+                    signatureImg = null;
+                    signatureData = null;
+                    ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+                    previewImg.style.display = 'none';
+                    useImage.style.display = 'none';
+                    sizeControl.style.display = 'none';
+                    await openPDF(e.target.files[0]);
+                }
+            };
+            input.click();
+        }
+        
+        function createOverlay() {
+            if (!signatureImg || pdfPages.length === 0) return;
+            if (overlay) overlay.remove();
+            
+            const firstPage = pdfPages[0];
+            const aspect = sigOriginalH / sigOriginalW;
+            const widthPoints = parseInt(sigWidthInput.value);
+            overlayW = widthPoints * scale;
+            overlayH = widthPoints * aspect * scale;
+            
+            overlayX = (firstPage.width - overlayW) / 2;
+            overlayY = firstPage.height - overlayH - 60;
+            
+            overlay = document.createElement('div');
+            overlay.className = 'sig-overlay';
+            overlay.style.cssText = `left:${overlayX}px; top:${overlayY}px; width:${overlayW}px; height:${overlayH}px; position:absolute;`;
+            
+            const img = document.createElement('img');
+            img.src = signatureData;
+            overlay.appendChild(img);
+            
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+            overlay.appendChild(handle);
+            
+            firstPage.wrapper.appendChild(overlay);
+            sizeControl.style.display = 'flex';
+            
+            setupDragEvents();
+            currentStep = 3;
+            updateSteps();
+            showToast('Seret atau resize tanda tangan');
+        }
+        
+        function setupDragEvents() {
+            if (!overlay) return;
+            const handle = overlay.querySelector('.resize-handle');
+            
+            overlay.addEventListener('mousedown', (e) => {
+                if (e.target === handle) return;
+                e.preventDefault();
+                isDragging = true;
+                const rect = overlay.getBoundingClientRect();
+                const parentRect = overlay.parentElement.getBoundingClientRect();
+                dragStartX = e.clientX - rect.left + parentRect.left;
+                dragStartY = e.clientY - rect.top + parentRect.top;
+            });
+            
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isResizing = true;
+                dragStartX = e.clientX;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && overlay) {
+                    const parentRect = overlay.parentElement.getBoundingClientRect();
+                    let nx = e.clientX - dragStartX;
+                    let ny = e.clientY - dragStartY;
+                    nx = Math.max(0, Math.min(nx, parentRect.width - overlayW));
+                    ny = Math.max(0, Math.min(ny, parentRect.height - overlayH));
+                    overlay.style.left = nx + 'px';
+                    overlay.style.top = ny + 'px';
+                    overlayX = nx;
+                    overlayY = ny;
+                } else if (isResizing && overlay) {
+                    const delta = e.clientX - dragStartX;
+                    let newW = overlayW + delta;
+                    if (newW >= 40 && newW <= 350) {
+                        const aspect = sigOriginalH / sigOriginalW;
+                        overlayW = newW;
+                        overlayH = newW * aspect;
+                        overlay.style.width = overlayW + 'px';
+                        overlay.style.height = overlayH + 'px';
+                        sigWidthInput.value = Math.round(overlayW / scale);
+                        dragStartX = e.clientX;
+                    }
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                isResizing = false;
+            });
+            
+            overlay.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                if (e.target === handle) return;
+                e.preventDefault();
+                isDragging = true;
+                const rect = overlay.getBoundingClientRect();
+                const parentRect = overlay.parentElement.getBoundingClientRect();
+                dragStartX = touch.clientX - rect.left + parentRect.left;
+                dragStartY = touch.clientY - rect.top + parentRect.top;
+            });
+            
+            handle.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isResizing = true;
+                dragStartX = e.touches[0].clientX;
+            });
+            
+            document.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                if (isDragging && overlay) {
+                    e.preventDefault();
+                    const parentRect = overlay.parentElement.getBoundingClientRect();
+                    let nx = touch.clientX - dragStartX;
+                    let ny = touch.clientY - dragStartY;
+                    nx = Math.max(0, Math.min(nx, parentRect.width - overlayW));
+                    ny = Math.max(0, Math.min(ny, parentRect.height - overlayH));
+                    overlay.style.left = nx + 'px';
+                    overlay.style.top = ny + 'px';
+                    overlayX = nx;
+                    overlayY = ny;
+                } else if (isResizing && overlay) {
+                    e.preventDefault();
+                    const delta = touch.clientX - dragStartX;
+                    let newW = overlayW + delta;
+                    if (newW >= 40 && newW <= 350) {
+                        const aspect = sigOriginalH / sigOriginalW;
+                        overlayW = newW;
+                        overlayH = newW * aspect;
+                        overlay.style.width = overlayW + 'px';
+                        overlay.style.height = overlayH + 'px';
+                        sigWidthInput.value = Math.round(overlayW / scale);
+                        dragStartX = touch.clientX;
+                    }
+                }
+            });
+            
+            document.addEventListener('touchend', () => {
+                isDragging = false;
+                isResizing = false;
+            });
+        }
+        
+        function backToSign() {
+            if (!pdfDoc) {
+                showToast('Tidak ada PDF yang terbuka');
+                return;
+            }
+            if (overlay) overlay.remove();
+            ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+            previewImg.style.display = 'none';
+            useImage.style.display = 'none';
+            sizeControl.style.display = 'none';
+            currentStep = 2;
+            updateSteps();
+            placeBtn.style.display = 'inline-flex';
+            newSignBtn.style.display = 'none';
+            showToast('Buat tanda tangan baru');
+        }
+        
+        async function savePDF() {
+            if (!pdfDoc || !signatureImg) {
+                showToast('Buka PDF dan buat tanda tangan dulu');
+                return;
+            }
+            showLoading(true);
+            try {
+                const name = fileNameInput.value.trim() || 'PDFsignweb';
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                
+                for (let i = 0; i < pdfPages.length; i++) {
+                    const page = pdfPages[i];
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = page.width;
+                    tempCanvas.height = page.height;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    
+                    tempCtx.drawImage(page.canvas, 0, 0);
+                    
+                    if (i === 0 && overlay) {
+                        const img = new Image();
+                        await new Promise(resolve => {
+                            img.onload = () => {
+                                tempCtx.drawImage(img, overlayX, overlayY, overlayW, overlayH);
+                                resolve();
+                            };
+                            img.src = signatureData;
+                        });
+                    }
+                    
+                    const imgData = tempCanvas.toDataURL('image/jpeg', 0.9);
+                    if (i > 0) pdf.addPage();
+                    const pdfW = pdf.internal.pageSize.getWidth();
+                    const pdfH = (tempCanvas.height / tempCanvas.width) * pdfW;
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+                }
+                
+                pdf.save(name + '.pdf');
+                currentStep = 4;
+                updateSteps();
+                showToast('PDF berhasil disimpan');
+            } catch (err) {
+                showToast('Gagal menyimpan');
+            }
+            showLoading(false);
+        }
+        
+        function useManualSignature() {
+            const isEmpty = ctx.getImageData(0, 0, signCanvas.width, signCanvas.height).data.every(v => v === 0);
+            if (isEmpty) {
+                showToast('Gambar tanda tangan dulu');
+                return;
+            }
+            signatureData = signCanvas.toDataURL('image/png');
+            const img = new Image();
+            img.onload = () => {
+                signatureImg = img;
+                sigOriginalW = img.width;
+                sigOriginalH = img.height;
+                currentStep = 2;
+                updateSteps();
+                showToast('Tanda tangan siap, klik "Tempatkan"');
+            };
+            img.src = signatureData;
+        }
+        
+        function handleUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const cctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    cctx.drawImage(img, 0, 0);
+                    
+                    const imgData = cctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (data[i] > 240 && data[i+1] > 240 && data[i+2] > 240) {
+                            data[i+3] = 0;
+                        }
+                    }
+                    cctx.putImageData(imgData, 0, 0);
+                    signatureData = canvas.toDataURL('image/png');
+                    
+                    const cleaned = new Image();
+                    cleaned.onload = () => {
+                        signatureImg = cleaned;
+                        sigOriginalW = cleaned.width;
+                        sigOriginalH = cleaned.height;
+                        previewImg.src = signatureData;
+                        previewImg.style.display = 'block';
+                        useImage.style.display = 'block';
+                        showToast('Gambar siap');
+                    };
+                    cleaned.src = signatureData;
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function useUploadedImage() {
+            if (!signatureImg) {
+                showToast('Upload gambar dulu');
+                return;
+            }
+            currentStep = 2;
+            updateSteps();
+            showToast('Tanda tangan siap, klik "Tempatkan"');
+        }
+        
+        function applySize() {
+            if (overlay) {
+                const newWidth = parseInt(sigWidthInput.value);
+                if (newWidth > 0) {
+                    const aspect = sigOriginalH / sigOriginalW;
+                    overlayW = newWidth * scale;
+                    overlayH = newWidth * aspect * scale;
+                    overlay.style.width = overlayW + 'px';
+                    overlay.style.height = overlayH + 'px';
+                    showToast(`Ukuran diubah ke ${newWidth} point`);
+                }
+            }
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById('manualTab').classList.toggle('active', tab === 'manual');
+            document.getElementById('uploadTab').classList.toggle('active', tab === 'upload');
+        }
+        
+        // Event listeners
+        openBtn.onclick = () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf';
+            input.onchange = e => e.target.files[0] && openPDF(e.target.files[0]);
+            input.click();
+        };
+        
+        changePdfBtn.onclick = changePDF;
+        
+        placeBtn.onclick = () => {
+            if (signatureImg) {
+                createOverlay();
+                placeBtn.style.display = 'none';
+                newSignBtn.style.display = 'inline-flex';
+            } else {
+                showToast('Buat tanda tangan dulu');
+            }
+        };
+        
+        newSignBtn.onclick = backToSign;
+        saveBtn.onclick = savePDF;
+        useManual.onclick = useManualSignature;
+        useImage.onclick = useUploadedImage;
+        uploadArea.onclick = () => imageUpload.click();
+        imageUpload.onchange = handleUpload;
+        applySizeBtn.onclick = applySize;
+        
+        document.querySelectorAll('.step').forEach(step => {
+            step.onclick = () => {
+                const stepNum = parseInt(step.dataset.step);
+                if (stepNum >= 3 && !pdfDoc) {
+                    showToast('Buka PDF terlebih dahulu');
+                    return;
+                }
+                if (stepNum === 4 && !signatureImg) {
+                    showToast('Buat tanda tangan terlebih dahulu');
+                    return;
+                }
+                currentStep = stepNum;
+                if (stepNum === 2 && overlay) overlay.remove();
+                if (stepNum === 1 && overlay) overlay.remove();
+                updateSteps();
+                if (stepNum === 2) {
+                    placeBtn.style.display = 'inline-flex';
+                    newSignBtn.style.display = 'none';
+                    sizeControl.style.display = 'none';
+                }
+                if (stepNum === 3 && signatureImg && pdfDoc && !overlay) {
+                    createOverlay();
+                    placeBtn.style.display = 'none';
+                    newSignBtn.style.display = 'inline-flex';
+                }
+            };
+        });
+        
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.onclick = () => switchTab(tab.dataset.tab);
+        });
+        
+        initCanvas();
+        updateSteps();
+    </script>
+</body>
+</html>
