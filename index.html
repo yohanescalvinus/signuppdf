@@ -332,7 +332,7 @@
             display: block;
         }
 
-        /* Signature Overlay - AKURAT */
+        /* Signature Overlay */
         .sig-overlay {
             position: absolute;
             cursor: move;
@@ -363,6 +363,17 @@
             cursor: nw-resize;
             border: 2px solid white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Info Koordinat untuk debugging */
+        .coord-info {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            display: inline-block;
         }
 
         /* Canvas */
@@ -819,9 +830,13 @@
         let isDragging = false;
         let isResizing = false;
         let dragStartX = 0, dragStartY = 0;
+        
+        // Koordinat dalam pixel canvas (tampilan)
         let overlayX = 100, overlayY = 100;
         let overlayW = 120, overlayH = 60;
-        let currentScale = 1;
+        
+        // Data kalibrasi
+        let pdfToCanvasScale = 1;      // Skala dari PDF point ke canvas pixel
         let pageWidthPoints = 0;
         let pageHeightPoints = 0;
         let sigOriginalW = 0, sigOriginalH = 0;
@@ -962,9 +977,9 @@
                         pageHeightPoints = viewport.height;
                     }
                     
-                    // Gunakan scale yang konsisten
-                    const displayScale = 1.3;
-                    const displayViewport = page.getViewport({ scale: displayScale });
+                    // Gunakan scale yang tetap untuk preview
+                    const PREVIEW_SCALE = 1.2;
+                    const displayViewport = page.getViewport({ scale: PREVIEW_SCALE });
                     const canvas = document.createElement('canvas');
                     canvas.className = 'pdf-canvas';
                     canvas.width = displayViewport.width;
@@ -985,19 +1000,28 @@
                         canvas, 
                         displayWidth: displayViewport.width, 
                         displayHeight: displayViewport.height,
-                        pointsWidth: pageWidthPoints,
-                        pointsHeight: pageHeightPoints
+                        previewScale: PREVIEW_SCALE
                     });
                 }
                 
-                // Hitung skala yang akurat
-                currentScale = pdfPages[0].displayWidth / pageWidthPoints;
+                // Hitung skala kalibrasi: PDF point ke canvas pixel
+                pdfToCanvasScale = pdfPages[0].displayWidth / pageWidthPoints;
+                
+                // Set default ukuran tanda tangan (120 point lebar)
+                const defaultWidthPoints = 120;
+                const defaultAspect = 0.5; // asumsi rasio default
+                overlayW = defaultWidthPoints * pdfToCanvasScale;
+                overlayH = overlayW * defaultAspect;
+                
+                // Posisi default di tengah halaman bagian bawah
+                overlayX = (pdfPages[0].displayWidth - overlayW) / 2;
+                overlayY = pdfPages[0].displayHeight - overlayH - 60;
                 
                 pdfEmpty.style.display = 'none';
                 placeBtn.style.display = 'inline-flex';
                 currentStep = 2;
                 updateSteps();
-                showToast(`PDF berhasil dibuka - Ukuran: ${Math.round(pageWidthPoints)} x ${Math.round(pageHeightPoints)} point`);
+                showToast(`PDF berhasil dibuka - Skala: 1 point = ${pdfToCanvasScale.toFixed(3)} pixel`);
             } catch (err) {
                 console.error(err);
                 showToast('Gagal membuka PDF');
@@ -1033,11 +1057,11 @@
             const aspect = sigOriginalH / sigOriginalW;
             const widthPoints = parseInt(sigWidthInput.value);
             
-            // Hitung ukuran dalam pixel tampilan
-            overlayW = widthPoints * currentScale;
-            overlayH = widthPoints * aspect * currentScale;
+            // Hitung ukuran dalam pixel tampilan berdasarkan skala
+            overlayW = widthPoints * pdfToCanvasScale;
+            overlayH = widthPoints * aspect * pdfToCanvasScale;
             
-            // Posisi default di tengah bawah halaman
+            // Posisi default di tengah bawah
             overlayX = (firstPage.displayWidth - overlayW) / 2;
             overlayY = firstPage.displayHeight - overlayH - 80;
             
@@ -1104,7 +1128,8 @@
                         overlayH = newW * aspect;
                         overlay.style.width = overlayW + 'px';
                         overlay.style.height = overlayH + 'px';
-                        sigWidthInput.value = Math.round(overlayW / currentScale);
+                        // Update input nilai dalam point
+                        sigWidthInput.value = Math.round(overlayW / pdfToCanvasScale);
                         dragStartX = e.clientX;
                     }
                 }
@@ -1158,7 +1183,7 @@
                         overlayH = newW * aspect;
                         overlay.style.width = overlayW + 'px';
                         overlay.style.height = overlayH + 'px';
-                        sigWidthInput.value = Math.round(overlayW / currentScale);
+                        sigWidthInput.value = Math.round(overlayW / pdfToCanvasScale);
                         dragStartX = touch.clientX;
                     }
                 }
@@ -1206,17 +1231,25 @@
                     tempCanvas.height = page.displayHeight;
                     const tempCtx = tempCanvas.getContext('2d');
                     
+                    // Gambar halaman PDF ke canvas
                     tempCtx.drawImage(page.canvas, 0, 0);
                     
+                    // Tambahkan tanda tangan ke halaman pertama
                     if (i === 0 && overlay) {
                         const img = new Image();
                         await new Promise(resolve => {
                             img.onload = () => {
+                                // Gambar langsung dengan koordinat pixel canvas yang sama
                                 tempCtx.drawImage(img, overlayX, overlayY, overlayW, overlayH);
                                 resolve();
                             };
                             img.src = signatureData;
                         });
+                        
+                        // Log untuk debugging
+                        console.log(`Tanda tangan ditempatkan di canvas: X=${overlayX}, Y=${overlayY}, W=${overlayW}, H=${overlayH}`);
+                        console.log(`Skala: 1 point = ${pdfToCanvasScale} pixel`);
+                        console.log(`Posisi dalam point: X=${(overlayX / pdfToCanvasScale).toFixed(2)}, Y=${(overlayY / pdfToCanvasScale).toFixed(2)}`);
                     }
                     
                     const imgData = tempCanvas.toDataURL('image/jpeg', 0.9);
@@ -1308,14 +1341,14 @@
         
         function applySize() {
             if (overlay) {
-                const newWidth = parseInt(sigWidthInput.value);
-                if (newWidth > 0) {
+                const newWidthPoints = parseInt(sigWidthInput.value);
+                if (newWidthPoints > 0) {
                     const aspect = sigOriginalH / sigOriginalW;
-                    overlayW = newWidth * currentScale;
-                    overlayH = newWidth * aspect * currentScale;
+                    overlayW = newWidthPoints * pdfToCanvasScale;
+                    overlayH = newWidthPoints * aspect * pdfToCanvasScale;
                     overlay.style.width = overlayW + 'px';
                     overlay.style.height = overlayH + 'px';
-                    showToast(`Ukuran diubah ke ${newWidth} point`);
+                    showToast(`Ukuran diubah ke ${newWidthPoints} point`);
                 }
             }
         }
