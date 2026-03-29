@@ -79,7 +79,7 @@
             margin: 0 auto;
         }
 
-        /* ========== HEADER MINIMALIS ========== */
+        /* ========== HEADER ========== */
         .header {
             display: flex;
             align-items: center;
@@ -126,7 +126,6 @@
             margin-top: 2px;
         }
 
-        /* Theme Toggle */
         .theme-toggle {
             background: var(--btn-outline-bg);
             border: 1px solid var(--btn-outline-border);
@@ -362,10 +361,10 @@
             border: 2px solid white;
         }
 
-        /* Canvas */
+        /* Canvas - UKURAN FIX */
         .canvas-box {
             border-radius: 16px;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 14px;
             background: var(--btn-outline-bg);
             border: 1px solid var(--btn-outline-border);
@@ -377,35 +376,68 @@
             background: var(--canvas-bg);
             border-radius: 12px;
             cursor: crosshair;
+            display: block;
         }
 
-        /* Upload */
+        /* Upload Area - UKURAN FIX */
         .upload-box {
             border: 1px dashed var(--btn-outline-border);
             border-radius: 16px;
-            padding: 30px 20px;
+            padding: 28px 20px;
             text-align: center;
             cursor: pointer;
             background: var(--btn-outline-bg);
+            transition: all 0.2s;
+        }
+
+        .upload-box:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .upload-box i {
             color: var(--text-muted);
             font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
         }
 
         .upload-box div {
             color: var(--text-secondary);
-            margin-top: 6px;
             font-size: 12px;
         }
 
-        #imgPreview {
+        /* PREVIEW GAMBAR - UKURAN FIX TIDAK MERUSAK LAYOUT */
+        .preview-container {
+            margin-top: 12px;
+            padding: 8px;
+            background: var(--btn-outline-bg);
+            border-radius: 12px;
+            border: 1px solid var(--btn-outline-border);
+            display: none;
+        }
+
+        .preview-container.active {
+            display: block;
+        }
+
+        .preview-title {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-image {
             max-width: 100%;
             max-height: 70px;
-            margin-top: 12px;
-            border-radius: 10px;
-            display: none;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 4px;
         }
 
         /* Size Control */
@@ -416,6 +448,11 @@
             margin-top: 14px;
             padding-top: 14px;
             border-top: 1px solid var(--border);
+        }
+
+        .size-control span {
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         .size-control input {
@@ -435,7 +472,8 @@
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 500;
         }
 
         /* Tabs */
@@ -489,6 +527,10 @@
             background: var(--input-bg);
             color: var(--text);
             font-size: 13px;
+        }
+
+        .save-area input::placeholder {
+            color: var(--text-muted);
         }
 
         .btn-save {
@@ -559,7 +601,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ========== FOOTER MINIMALIS ========== */
+        /* Footer */
         .footer {
             text-align: center;
             padding: 20px 16px;
@@ -585,7 +627,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- HEADER MINIMALIS -->
+        <!-- HEADER -->
         <div class="header">
             <div class="logo-area">
                 <div class="logo-icon">
@@ -675,10 +717,19 @@
                         <div id="uploadArea" class="upload-box">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <div>Klik untuk upload</div>
+                            <div style="font-size: 10px; margin-top: 4px;">PNG / JPG</div>
                             <input type="file" id="imageUpload" accept="image/png,image/jpeg" hidden>
                         </div>
-                        <img id="previewImg" alt="Preview">
-                        <button id="useImageBtn" class="btn btn-success" style="width:100%; margin-top: 10px; display: none;">Gunakan</button>
+                        
+                        <!-- PREVIEW DENGAN UKURAN FIX - TIDAK MERUSAK LAYOUT -->
+                        <div id="previewContainer" class="preview-container">
+                            <div class="preview-title">
+                                <i class="fas fa-image"></i> Preview
+                            </div>
+                            <img id="previewImg" class="preview-image" alt="Preview Tanda Tangan">
+                        </div>
+                        
+                        <button id="useImageBtn" class="btn btn-success" style="width:100%; margin-top: 12px; display: none;">Gunakan</button>
                     </div>
 
                     <div id="sizeControl" class="size-control" style="display: none;">
@@ -695,7 +746,7 @@
             </div>
         </div>
 
-        <!-- FOOTER MINIMALIS -->
+        <!-- FOOTER -->
         <div class="footer">
             <p>
                 <i class="fas fa-heart"></i>
@@ -790,6 +841,7 @@
         const useImage = document.getElementById('useImageBtn');
         const uploadArea = document.getElementById('uploadArea');
         const imageUpload = document.getElementById('imageUpload');
+        const previewContainer = document.getElementById('previewContainer');
         const previewImg = document.getElementById('previewImg');
         const fileNameInput = document.getElementById('fileNameInput');
         const sizeControl = document.getElementById('sizeControl');
@@ -829,7 +881,7 @@
         function initCanvas() {
             const resizeCanvas = () => {
                 const container = signCanvas.parentElement;
-                const width = container.clientWidth - 20;
+                const width = container.clientWidth - 24;
                 signCanvas.width = width;
                 signCanvas.height = 140;
                 ctx.lineWidth = 2;
@@ -948,7 +1000,8 @@
                     signatureImg = null;
                     signatureData = null;
                     ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
-                    previewImg.style.display = 'none';
+                    previewContainer.classList.remove('active');
+                    previewImg.src = '';
                     useImage.style.display = 'none';
                     sizeControl.style.display = 'none';
                     await openPDF(e.target.files[0]);
@@ -1103,7 +1156,8 @@
             }
             if (overlay) overlay.remove();
             ctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
-            previewImg.style.display = 'none';
+            previewContainer.classList.remove('active');
+            previewImg.src = '';
             useImage.style.display = 'none';
             sizeControl.style.display = 'none';
             currentStep = 2;
@@ -1209,9 +1263,9 @@
                         sigOriginalW = cleaned.width;
                         sigOriginalH = cleaned.height;
                         previewImg.src = signatureData;
-                        previewImg.style.display = 'block';
+                        previewContainer.classList.add('active');
                         useImage.style.display = 'block';
-                        showToast('Gambar siap');
+                        showToast('Gambar siap digunakan');
                     };
                     cleaned.src = signatureData;
                 };
