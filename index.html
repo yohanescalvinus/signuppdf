@@ -2,21 +2,22 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>PDFSignWeb | Glass Signature</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PDFSignWeb | Glass Signature - Mobile Ready</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 24px;
+            padding: 16px;
             position: relative;
             overflow-x: hidden;
         }
@@ -44,102 +45,96 @@
         /* Glass Header */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 24px;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 32px;
-            padding: 24px;
+            border-radius: 28px;
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .logo-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
-            border-radius: 20px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .logo-icon i {
-            font-size: 28px;
+            font-size: 24px;
             color: white;
         }
 
         .logo-text {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: 700;
             background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
         }
 
         .tagline {
             color: rgba(255,255,255,0.8);
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 12px;
         }
 
-        /* Glass Steps */
+        /* Glass Steps - Scrollable on mobile */
         .steps {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 80px;
-            padding: 8px;
+            border-radius: 60px;
+            padding: 6px;
             border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .steps::-webkit-scrollbar {
+            display: none;
         }
 
         .step-item {
             flex: 1;
             text-align: center;
-            padding: 12px 16px;
-            border-radius: 60px;
+            padding: 8px 12px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .step-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+            transition: all 0.2s ease;
+            min-width: 70px;
         }
 
         .step-number {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 8px;
+            margin: 0 auto 6px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             color: rgba(255,255,255,0.9);
-            transition: all 0.3s;
         }
 
         .step-item.active .step-number {
             background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
             color: #667eea;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .step-item.completed .step-number {
@@ -148,27 +143,30 @@
         }
 
         .step-label {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 500;
             color: rgba(255,255,255,0.9);
         }
 
         .step-desc {
-            font-size: 11px;
+            font-size: 9px;
             color: rgba(255,255,255,0.6);
-            margin-top: 2px;
+            display: none;
         }
 
         /* Grid */
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        @media (max-width: 900px) {
+        @media (min-width: 768px) {
             .grid-2 {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 380px;
+            }
+            .step-desc {
+                display: block;
             }
         }
 
@@ -176,25 +174,18 @@
         .card {
             backdrop-filter: blur(12px);
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
+            border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            padding: 20px 24px;
+            padding: 16px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .card-header h2 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -202,17 +193,13 @@
             color: white;
         }
 
-        .card-header h2 i {
-            color: rgba(255,255,255,0.8);
-        }
-
         .card-body {
-            padding: 24px;
+            padding: 20px;
         }
 
-        /* Glass Buttons */
+        /* Buttons */
         .btn {
-            padding: 10px 24px;
+            padding: 10px 18px;
             border-radius: 40px;
             font-size: 13px;
             font-weight: 500;
@@ -221,31 +208,18 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
             color: #667eea;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            background: white;
         }
 
         .btn-success {
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(76, 175, 80, 0.7));
             color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            background: #4caf50;
         }
 
         .btn-outline {
@@ -254,73 +228,57 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
         .btn-warning {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(245, 158, 11, 0.7));
             color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            background: #f59e0b;
         }
 
         .btn-group {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
         /* PDF Info */
         .pdf-info {
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            font-size: 12px;
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 11px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .pdf-name {
             font-weight: 500;
             color: rgba(255,255,255,0.9);
             word-break: break-all;
+            font-size: 11px;
         }
 
-        /* PDF Viewer */
+        /* PDF Viewer - Mobile optimized */
         .pdf-viewer {
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: auto;
-            max-height: 550px;
+            max-height: 450px;
             background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
+            -webkit-overflow-scrolling: touch;
         }
 
         .pdf-empty {
             text-align: center;
-            padding: 80px 20px;
+            padding: 60px 20px;
             color: rgba(255,255,255,0.6);
-        }
-
-        .pdf-empty i {
-            font-size: 56px;
-            margin-bottom: 16px;
-            opacity: 0.5;
         }
 
         .pdf-page {
             position: relative;
-            margin: 16px;
+            margin: 12px;
             display: flex;
             justify-content: center;
         }
@@ -331,22 +289,19 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             background: white;
+            display: block;
         }
 
-        /* Signature Overlay */
+        /* Signature Overlay - Improved for touch */
         .sig-overlay {
             position: absolute;
             cursor: move;
             z-index: 10;
             border: 2px solid rgba(255,255,255,0.8);
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(8px);
-            transition: box-shadow 0.2s;
-        }
-
-        .sig-overlay:hover {
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+            touch-action: none;
         }
 
         .sig-overlay img {
@@ -359,144 +314,100 @@
 
         .resize-handle {
             position: absolute;
-            bottom: -8px;
-            right: -8px;
-            width: 16px;
-            height: 16px;
+            bottom: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
             background: white;
             border-radius: 50%;
             cursor: nw-resize;
             border: 2px solid #667eea;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            touch-action: none;
         }
 
-        /* Canvas */
+        /* Canvas - Mobile optimized */
         .canvas-box {
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 16px;
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 14px;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255,255,255,0.15);
+            touch-action: none;
         }
 
         #signCanvas {
             width: 100%;
-            height: 150px;
+            height: 140px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
             cursor: crosshair;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            touch-action: none;
         }
 
         /* Upload */
         .upload-box {
             border: 1px dashed rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
-            padding: 40px 20px;
+            border-radius: 16px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s;
-        }
-
-        .upload-box:hover {
-            border-color: rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .upload-box i {
-            font-size: 40px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 12px;
-        }
-
-        .upload-box div {
-            color: rgba(255,255,255,0.8);
         }
 
         #imgPreview {
             max-width: 100%;
-            max-height: 100px;
+            max-height: 80px;
             margin-top: 12px;
-            border-radius: 12px;
+            border-radius: 10px;
             display: none;
-            background: white;
-            padding: 8px;
         }
 
         /* Size Control */
         .size-control {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-top: 16px;
-            padding-top: 16px;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
             border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .size-control span {
-            font-size: 12px;
-            color: rgba(255,255,255,0.7);
+            flex-wrap: wrap;
         }
 
         .size-control input {
             flex: 1;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 40px;
-            font-size: 13px;
+            border-radius: 30px;
+            font-size: 12px;
             background: rgba(255,255,255,0.1);
             color: white;
-            backdrop-filter: blur(5px);
-        }
-
-        .size-control input:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        .size-control button {
-            padding: 8px 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 40px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .size-control button:hover {
-            background: rgba(255,255,255,0.3);
+            min-width: 80px;
         }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255, 255, 255, 0.08);
             padding: 4px;
-            border-radius: 48px;
-            margin-bottom: 20px;
+            border-radius: 40px;
+            margin-bottom: 16px;
         }
 
         .tab {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             border: none;
             background: transparent;
-            border-radius: 40px;
-            font-size: 13px;
+            border-radius: 32px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             color: rgba(255,255,255,0.7);
-            transition: all 0.2s;
         }
 
         .tab.active {
             background: rgba(255, 255, 255, 0.2);
             color: white;
-            backdrop-filter: blur(5px);
         }
 
         .tab-content {
@@ -509,69 +420,54 @@
 
         /* Save Area */
         .save-area {
-            margin-top: 24px;
-            padding-top: 20px;
+            margin-top: 20px;
+            padding-top: 16px;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .save-area input {
             width: 100%;
-            padding: 12px 18px;
+            padding: 10px 16px;
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 40px;
-            font-size: 14px;
-            margin-bottom: 12px;
+            font-size: 13px;
+            margin-bottom: 10px;
             background: rgba(255,255,255,0.1);
             color: white;
-            backdrop-filter: blur(5px);
-        }
-
-        .save-area input::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .save-area input:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.5);
         }
 
         .btn-save {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
             color: #667eea;
             border: none;
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            background: white;
         }
 
         /* Toast */
         .toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(0, 0, 0, 0.8);
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
             color: white;
-            padding: 12px 24px;
-            border-radius: 48px;
+            padding: 12px 20px;
+            border-radius: 40px;
             font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.3s;
             z-index: 100;
-            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
         }
 
         .toast.show {
@@ -594,7 +490,6 @@
             z-index: 200;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s;
         }
 
         .loading.active {
@@ -603,8 +498,8 @@
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border: 3px solid rgba(255,255,255,0.3);
             border-top-color: white;
             border-radius: 50%;
@@ -616,36 +511,36 @@
         }
 
         .info-text {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(255,255,255,0.6);
-            margin-top: 12px;
+            margin-top: 10px;
             text-align: center;
         }
 
-        /* Footer */
         footer {
             text-align: center;
-            margin-top: 32px;
-            padding: 20px;
+            margin-top: 24px;
+            padding: 16px;
             color: rgba(255,255,255,0.5);
-            font-size: 12px;
+            font-size: 10px;
+        }
+
+        /* Touch feedback */
+        .btn:active {
+            transform: scale(0.97);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Glass Header -->
         <div class="header">
             <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-pen-fancy"></i>
-                </div>
+                <div class="logo-icon"><i class="fas fa-pen-fancy"></i></div>
                 <span class="logo-text">PDFSignWeb</span>
             </div>
-            <div class="tagline">Tanda tangani dokumen PDF dengan presisi tinggi</div>
+            <div class="tagline">Tanda tangan PDF presisi untuk semua perangkat</div>
         </div>
 
-        <!-- Glass Steps -->
         <div class="steps">
             <div class="step-item" data-step="1" id="step1">
                 <div class="step-number">1</div>
@@ -670,12 +565,11 @@
         </div>
 
         <div class="grid-2">
-            <!-- Kiri: PDF -->
             <div class="card">
                 <div class="card-header">
                     <h2>
                         <span><i class="fas fa-file-pdf"></i> Dokumen PDF</span>
-                        <button id="btnChangePdf" class="btn btn-outline" style="padding: 5px 12px; font-size: 11px; display: none;">
+                        <button id="btnChangePdf" class="btn btn-outline" style="padding: 4px 10px; font-size: 10px; display: none;">
                             <i class="fas fa-sync-alt"></i> Ganti
                         </button>
                     </h2>
@@ -688,13 +582,13 @@
                     </div>
 
                     <div id="pdfInfoPanel" class="pdf-info" style="display: none;">
-                        <span><i class="fas fa-file-pdf"></i> PDF aktif:</span>
+                        <span><i class="fas fa-file-pdf"></i> PDF:</span>
                         <span class="pdf-name" id="currentPdfName"></span>
                     </div>
 
                     <div class="pdf-viewer" id="pdfViewer">
                         <div class="pdf-empty" id="pdfEmpty">
-                            <i class="fas fa-file-pdf"></i>
+                            <i class="fas fa-file-pdf" style="font-size: 40px;"></i>
                             <p>Klik "Pilih PDF" untuk mulai</p>
                         </div>
                         <div id="pdfPages"></div>
@@ -703,22 +597,21 @@
                 </div>
             </div>
 
-            <!-- Kanan: Tanda Tangan -->
             <div class="card">
                 <div class="card-header">
                     <h2><i class="fas fa-signature"></i> Tanda Tangan</h2>
                 </div>
                 <div class="card-body">
                     <div class="tabs">
-                        <button class="tab active" data-tab="manual">✍️ Gambar Manual</button>
-                        <button class="tab" data-tab="upload">🖼️ Upload Gambar</button>
+                        <button class="tab active" data-tab="manual">✍️ Manual</button>
+                        <button class="tab" data-tab="upload">🖼️ Upload</button>
                     </div>
 
                     <div id="tabManual" class="tab-content active">
                         <div class="canvas-box">
-                            <canvas id="signCanvas" width="500" height="150"></canvas>
+                            <canvas id="signCanvas"></canvas>
                         </div>
-                        <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 8px;">
                             <button id="btnClear" class="btn btn-outline" style="flex:1"><i class="fas fa-eraser"></i> Hapus</button>
                             <button id="btnUseManual" class="btn btn-success" style="flex:1"><i class="fas fa-check"></i> Gunakan</button>
                         </div>
@@ -726,17 +619,17 @@
 
                     <div id="tabUpload" class="tab-content">
                         <div id="uploadBox" class="upload-box">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <div>Klik untuk upload</div>
-                            <div style="font-size: 11px; opacity: 0.7;">PNG / JPG (background putih akan dihapus)</div>
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 28px;"></i>
+                            <div style="margin-top: 6px; font-size: 12px;">Klik untuk upload</div>
+                            <div style="font-size: 10px; opacity: 0.7;">PNG / JPG</div>
                             <input type="file" id="fileUpload" accept="image/png,image/jpeg" hidden>
                         </div>
                         <img id="imgPreview" alt="Preview">
-                        <button id="btnUseImage" class="btn btn-success" style="width:100%; margin-top: 12px; display: none;">Gunakan</button>
+                        <button id="btnUseImage" class="btn btn-success" style="width:100%; margin-top: 10px; display: none;">Gunakan</button>
                     </div>
 
                     <div class="size-control" id="sizeControl" style="display: none;">
-                        <span>Lebar (point):</span>
+                        <span style="font-size: 12px;">Lebar (point):</span>
                         <input type="number" id="sigWidth" value="120" step="10">
                         <button id="applySize">Terapkan</button>
                     </div>
@@ -749,7 +642,7 @@
             </div>
         </div>
 
-        <footer>PDFSignWeb — Glass Theme | Digital Signature Solution</footer>
+        <footer>PDFSignWeb — Presisi untuk semua perangkat</footer>
     </div>
 
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
@@ -762,8 +655,6 @@
         // State
         let pdfDoc = null;
         let pages = [];
-        let currentPdfFile = null;
-        let currentPdfName = "";
         let signatureImg = null;
         let signatureData = null;
         let overlay = null;
@@ -806,6 +697,7 @@
         const loading = document.getElementById('loading');
         
         let isDrawing = false;
+        let lastTouchX = 0, lastTouchY = 0;
         
         function showToast(msg) {
             toastMsg.textContent = msg;
@@ -874,28 +766,41 @@
             }
         }
         
+        // Canvas untuk tanda tangan - optimized for touch
         function initCanvas() {
-            const w = signCanvas.parentElement.clientWidth - 20;
-            signCanvas.width = w;
-            signCanvas.height = 150;
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#1f2937';
+            const resizeCanvas = () => {
+                const container = signCanvas.parentElement;
+                const width = container.clientWidth - 20;
+                signCanvas.width = width;
+                signCanvas.height = 140;
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#1f2937';
+            };
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
             
+            // Mouse events
             signCanvas.addEventListener('mousedown', (e) => {
                 isDrawing = true;
                 const rect = signCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
-                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
+                const scaleX = signCanvas.width / rect.width;
+                const scaleY = signCanvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
+                e.preventDefault();
             });
             
             signCanvas.addEventListener('mousemove', (e) => {
                 if (!isDrawing) return;
                 const rect = signCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) * (signCanvas.width / rect.width);
-                const y = (e.clientY - rect.top) * (signCanvas.height / rect.height);
+                const scaleX = signCanvas.width / rect.width;
+                const scaleY = signCanvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
                 ctx.lineTo(x, y);
                 ctx.stroke();
             });
@@ -903,15 +808,20 @@
             signCanvas.addEventListener('mouseup', () => { isDrawing = false; ctx.closePath(); });
             signCanvas.addEventListener('mouseout', () => { isDrawing = false; ctx.closePath(); });
             
+            // Touch events - optimized for mobile
             signCanvas.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
                 const rect = signCanvas.getBoundingClientRect();
-                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
-                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
+                const scaleX = signCanvas.width / rect.width;
+                const scaleY = signCanvas.height / rect.height;
+                const x = (touch.clientX - rect.left) * scaleX;
+                const y = (touch.clientY - rect.top) * scaleY;
                 isDrawing = true;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
+                lastTouchX = x;
+                lastTouchY = y;
             });
             
             signCanvas.addEventListener('touchmove', (e) => {
@@ -919,10 +829,14 @@
                 if (!isDrawing) return;
                 const touch = e.touches[0];
                 const rect = signCanvas.getBoundingClientRect();
-                const x = (touch.clientX - rect.left) * (signCanvas.width / rect.width);
-                const y = (touch.clientY - rect.top) * (signCanvas.height / rect.height);
+                const scaleX = signCanvas.width / rect.width;
+                const scaleY = signCanvas.height / rect.height;
+                const x = (touch.clientX - rect.left) * scaleX;
+                const y = (touch.clientY - rect.top) * scaleY;
                 ctx.lineTo(x, y);
                 ctx.stroke();
+                lastTouchX = x;
+                lastTouchY = y;
             });
             
             signCanvas.addEventListener('touchend', () => { isDrawing = false; ctx.closePath(); });
@@ -938,8 +852,6 @@
                 pdfPagesDiv.innerHTML = '';
                 pages = [];
                 
-                currentPdfFile = file;
-                currentPdfName = file.name;
                 currentPdfNameSpan.textContent = file.name;
                 pdfInfoPanel.style.display = 'flex';
                 btnChangePdf.style.display = 'inline-flex';
@@ -953,13 +865,15 @@
                         pageHeightPoints = viewport.height;
                     }
                     
-                    const displayScale = 1.3;
+                    // Gunakan scale yang konsisten untuk semua perangkat
+                    const displayScale = Math.min(1.2, window.innerWidth / viewport.width);
                     const displayViewport = page.getViewport({ scale: displayScale });
                     const canvas = document.createElement('canvas');
                     canvas.className = 'pdf-canvas';
                     canvas.width = displayViewport.width;
                     canvas.height = displayViewport.height;
                     canvas.style.width = '100%';
+                    canvas.style.height = 'auto';
                     const ctx2 = canvas.getContext('2d');
                     await page.render({ canvasContext: ctx2, viewport: displayViewport }).promise;
                     
@@ -969,11 +883,11 @@
                     wrapper.appendChild(canvas);
                     pdfPagesDiv.appendChild(wrapper);
                     
-                    pages.push({ wrapper, canvas, displayWidth: displayViewport.width, displayHeight: displayViewport.height });
+                    pages.push({ wrapper, canvas, displayWidth: displayViewport.width, displayHeight: displayViewport.height, displayScale: displayScale });
                 }
                 
                 currentScale = pages[0].displayWidth / pageWidthPoints;
-                infoText.textContent = `Ukuran halaman: ${Math.round(pageWidthPoints)} x ${Math.round(pageHeightPoints)} point`;
+                infoText.textContent = `Ukuran: ${Math.round(pageWidthPoints)} x ${Math.round(pageHeightPoints)} point`;
                 
                 pdfEmpty.style.display = 'none';
                 btnPlace.style.display = 'inline-flex';
@@ -982,6 +896,7 @@
                 updateStepUI();
                 showToast('PDF berhasil dibuka');
             } catch (err) {
+                console.error(err);
                 showToast('Gagal membuka PDF');
             }
             showLoading(false);
@@ -1021,7 +936,7 @@
             
             overlay = document.createElement('div');
             overlay.className = 'sig-overlay';
-            overlay.style.cssText = `left:${overlayX}px; top:${overlayY}px; width:${overlayW}px; height:${overlayH}px; position:absolute;`;
+            overlay.style.cssText = `left:${overlayX}px; top:${overlayY}px; width:${overlayW}px; height:${overlayH}px; position:absolute; touch-action:none;`;
             
             const img = document.createElement('img');
             img.src = signatureData;
@@ -1044,6 +959,7 @@
             if (!overlay) return;
             const handle = overlay.querySelector('.resize-handle');
             
+            // Mouse events
             overlay.addEventListener('mousedown', (e) => {
                 if (e.target === handle) return;
                 e.preventDefault();
@@ -1052,6 +968,7 @@
                 const parentRect = overlay.parentElement.getBoundingClientRect();
                 dragStartX = e.clientX - rect.left + parentRect.left;
                 dragStartY = e.clientY - rect.top + parentRect.top;
+                overlay.style.cursor = 'grabbing';
             });
             
             handle.addEventListener('mousedown', (e) => {
@@ -1090,8 +1007,10 @@
             document.addEventListener('mouseup', () => {
                 isDragging = false;
                 isResizing = false;
+                if (overlay) overlay.style.cursor = 'move';
             });
             
+            // Touch events for mobile
             overlay.addEventListener('touchstart', (e) => {
                 const touch = e.touches[0];
                 if (e.target === handle) return;
@@ -1113,6 +1032,7 @@
             document.addEventListener('touchmove', (e) => {
                 const touch = e.touches[0];
                 if (isDragging && overlay) {
+                    e.preventDefault();
                     const parentRect = overlay.parentElement.getBoundingClientRect();
                     let nx = touch.clientX - dragStartX;
                     let ny = touch.clientY - dragStartY;
@@ -1123,6 +1043,7 @@
                     overlayX = nx;
                     overlayY = ny;
                 } else if (isResizing && overlay) {
+                    e.preventDefault();
                     const delta = touch.clientX - dragStartX;
                     let newW = overlayW + delta;
                     if (newW >= 40 && newW <= 350) {
@@ -1203,6 +1124,7 @@
                 updateStepUI();
                 showToast('PDF berhasil disimpan');
             } catch (err) {
+                console.error(err);
                 showToast('Gagal menyimpan');
             }
             showLoading(false);
